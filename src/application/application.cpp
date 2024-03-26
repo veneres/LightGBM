@@ -247,6 +247,8 @@ void Application::Predict() {
                                config_.output_model.c_str());
     Log::Info("Finished RefitTree");
   } else {
+    auto start_time = std::chrono::high_resolution_clock::now();
+
     // create predictor
     Predictor predictor(boosting_.get(), config_.start_iteration_predict, config_.num_iteration_predict, config_.predict_raw_score,
                         config_.predict_leaf_index, config_.predict_contrib,
@@ -255,7 +257,9 @@ void Application::Predict() {
     predictor.Predict(config_.data.c_str(),
                       config_.output_result.c_str(), config_.header, config_.predict_disable_shape_check,
                       config_.precise_float_parser);
-    Log::Info("Finished prediction");
+    auto end_time = std::chrono::high_resolution_clock::now();
+    Log::Info("Finished prediction in %f milliseconds",
+              std::chrono::duration<double, std::milli>(end_time - start_time));
   }
 }
 
